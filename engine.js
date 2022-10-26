@@ -1,3 +1,11 @@
+var gl;
+var program;
+var positionLocation;
+var colorLocation;
+var matrixLocation;
+var positionBuffer;
+var colorBuffer;
+var matrix;
 class Vector3{
     x;
     y;
@@ -21,7 +29,9 @@ class BodyModel{
     id;
     name;
     indicies;
-    indexes;
+    indiciesBuffer;
+    verts;
+    vertsBuffer;
 }
 class Game{
     BodyModels = [];
@@ -29,22 +39,35 @@ class Game{
     camera;
     constructor(){
       var cube = new BodyModel();
-      cube.indicies = [
-        -1, 1 -1,
-        1, 1, -1,
-        -1, -1, -1,
-        -1, 1, -1,
+      cube.verts = [
+        -1.0, 1.0 -1.0,
+        1.0, 1.0, -1.0,
+        -1.0, -1.0, -1.0,
+        -1.0, 1.0, -1.0,
 
-        -1, 1, 1,
-        1, 1, 1,
-        -1, -1, 1,
-        -1, 1, 1,
+        -1.0, 1.0, 1.0,
+        1.0, 1.0, 1.0,
+        -1.0, -1.0, 1.0,
+        -1.0, 1.0, 1.0,
       ];
-      cube.indexes = [
-        1, 2, 3,
-        1,3,4,
+      cube.vertsBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cube.vertsBuffer);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Float32Array(cube.verts), gl.STATIC_DRAW);
+      cube.indicies = [
+        0, 2, 3, 0, 3, 1,
+        2, 6, 7, 2, 7, 3,
+        6, 4, 5, 6, 5, 7,
+        4, 0, 1, 4, 1, 5,
+        0, 4, 6, 0, 6, 2,
+        1, 5, 7, 1, 7, 3,
         
       ];
+      cube.indiciesBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cube.indicies);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
+        new Uint8Array(cube.indicies), gl.STATIC_DRAW);
+
+
       this.BodyModels.push();
     }
 
@@ -57,24 +80,25 @@ class Game{
         }
       
         // setup GLSL program
-        var program = webglUtils.createProgramFromScripts(gl, ["vertex-shader-3d", "fragment-shader-3d"]);
+        program = webglUtils.createProgramFromScripts(gl, ["vertex-shader-3d", "fragment-shader-3d"]);
       
         // look up where the vertex data needs to go.
-        var positionLocation = gl.getAttribLocation(program, "a_position");
-        var colorLocation = gl.getAttribLocation(program, "a_color");
+        positionLocation = gl.getAttribLocation(program, "a_position");
+        colorLocation = gl.getAttribLocation(program, "a_color");
       
+
         // lookup uniforms
-        var matrixLocation = gl.getUniformLocation(program, "u_matrix");
+        matrixLocation = gl.getUniformLocation(program, "u_matrix");
       
         // Create a buffer to put positions in
-        var positionBuffer = gl.createBuffer();
+        positionBuffer = gl.createBuffer();
         // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
         // Put geometry data into buffer
         setGeometry(gl);
       
         // Create a buffer to put colors in
-        var colorBuffer = gl.createBuffer();
+        colorBuffer = gl.createBuffer();
         // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = colorBuffer)
         gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
         // Put geometry data into buffer
@@ -91,6 +115,35 @@ class Game{
       
           gl.enableVertexAttribArray(positionLocation);
 
+    }
+
+    render(){
+      webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+
+      // Tell WebGL how to convert from clip space to pixels
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  
+      // Clear the canvas.
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      
+      // Tell it to use our program (pair of shaders)
+      gl.useProgram(program);
+  
+      // Turn on the position attribute
+     
+      // Compute the matrices
+      var matrix = m4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
+      matrix = m4.translate(matrix, translation[0], translation[1], translation[2]);
+      matrix = m4.xRotate(matrix, rotation[0]);
+      matrix = m4.yRotate(matrix, rotation[1]);
+      matrix = m4.zRotate(matrix, rotation[2]);
+      matrix = m4.scale(matrix, scale[0], scale[1], scale[2]);
+  
+      // Set the matrix.
+      gl.uniformMatrix4fv(matrixLocation, false, matrix);
+
+      gl.drawElements();
+  
     }
 }
 class Camera{
@@ -255,3 +308,8 @@ function radToDeg(r) {
   function degToRad(d) {
     return d * Math.PI / 180;
   }
+
+
+  var g = new Game();
+
+  g.i();

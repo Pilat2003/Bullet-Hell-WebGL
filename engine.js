@@ -21,13 +21,31 @@ class BodyModel{
     id;
     name;
     indicies;
+    indexes;
 }
 class Game{
-    BodyModels;
+    BodyModels = [];
     GameObjects;
     camera;
-    constructor(camera){
-        this.Camera = camera;
+    constructor(){
+      var cube = new BodyModel();
+      cube.indicies = [
+        -1, 1 -1,
+        1, 1, -1,
+        -1, -1, -1,
+        -1, 1, -1,
+
+        -1, 1, 1,
+        1, 1, 1,
+        -1, -1, 1,
+        -1, 1, 1,
+      ];
+      cube.indexes = [
+        1, 2, 3,
+        1,3,4,
+        
+      ];
+      this.BodyModels.push();
     }
 
     webglSETUP(){

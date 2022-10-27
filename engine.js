@@ -38,6 +38,7 @@ class Game{
     GameObjects;
     camera;
     constructor(){
+      this.webglSETUP();
       var cube = new BodyModel();
       cube.verts = [
         -1.0, 1.0 -1.0,
@@ -63,7 +64,7 @@ class Game{
         
       ];
       cube.indiciesBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cube.indicies);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cube.indiciesBuffer);
       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
         new Uint8Array(cube.indicies), gl.STATIC_DRAW);
 
@@ -74,7 +75,7 @@ class Game{
     webglSETUP(){
         var GObjects = this.GameObjects;
         var canvas = document.querySelector("#canvas");
-        var gl = canvas.getContext("webgl");
+        gl = canvas.getContext("webgl");
         if (!gl) {
           return;
         }
@@ -130,19 +131,25 @@ class Game{
       gl.useProgram(program);
   
       // Turn on the position attribute
-     
+      var transform = new Transform();
+      transform.position = [0,0,0]
+      transform.rotation = [0,0,0]
+      transform.scale = [1,1,1];
       // Compute the matrices
+      var m4 = new Camera();
       var matrix = m4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
-      matrix = m4.translate(matrix, translation[0], translation[1], translation[2]);
-      matrix = m4.xRotate(matrix, rotation[0]);
-      matrix = m4.yRotate(matrix, rotation[1]);
-      matrix = m4.zRotate(matrix, rotation[2]);
-      matrix = m4.scale(matrix, scale[0], scale[1], scale[2]);
+      matrix = m4.translate(matrix, transform.position[0], transform.position[1], transform.position[2]);
+      matrix = m4.xRotate(matrix, transform.rotation[0]);
+      matrix = m4.yRotate(matrix, transform.rotation[1]);
+      matrix = m4.zRotate(matrix, transform.rotation[2]);
+      matrix = m4.scale(matrix, transform.scale[0], transform.scale[1], transform.scale[2]);
   
       // Set the matrix.
       gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
-      gl.drawElements();
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.)
+
+      gl.drawElements(gl.TRIANGLES,8,gl.UNSIGNED_SHORT, 0);
   
     }
 }
@@ -309,7 +316,3 @@ function radToDeg(r) {
     return d * Math.PI / 180;
   }
 
-
-  var g = new Game();
-
-  g.i();

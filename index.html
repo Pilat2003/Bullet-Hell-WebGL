@@ -2,7 +2,7 @@
   <head>
     <title>NVIDIA Vertex Buffer Object demo</title>
    
-  <body onload="main()">
+  <body onload="var g = new Game();g.render();">
       <canvas id="canvas" width="600" height="600">
       </canvas>
 
@@ -622,7 +622,7 @@ function setColors(gl) {
       gl.STATIC_DRAW);
 }
 
-main();
+//main();
     </script>
 
 <script  id="vertex-shader-3d" type="x-shader/x-vertex">

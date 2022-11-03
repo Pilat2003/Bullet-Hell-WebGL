@@ -28,8 +28,8 @@ class GameObject {
 class BodyModel{
     id;
     name;
-    indicies;
-    indiciesBuffer;
+    colors;
+    colorsBuffer;
     verts;
     vertsBuffer;
 }
@@ -41,32 +41,16 @@ class Game{
       this.webglSETUP();
       var cube = new BodyModel();
       cube.verts = [
-        -1.0, 1.0 -1.0,
-        1.0, 1.0, -1.0,
-        -1.0, -1.0, -1.0,
-        -1.0, 1.0, -1.0,
-
-        -1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        -1.0, -1.0, 1.0,
-        -1.0, 1.0, 1.0,
+       
       ];
       cube.vertsBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cube.vertsBuffer);
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Float32Array(cube.verts), gl.STATIC_DRAW);
-      cube.indicies = [
-        0, 2, 3, 0, 3, 1,
-        2, 6, 7, 2, 7, 3,
-        6, 4, 5, 6, 5, 7,
-        4, 0, 1, 4, 1, 5,
-        0, 4, 6, 0, 6, 2,
-        1, 5, 7, 1, 7, 3,
-        
-      ];
-      cube.indiciesBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cube.indiciesBuffer);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cube.verts), gl.STATIC_DRAW);
+     
+      cube.colorsBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cube.colorsBuffer);
       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
-        new Uint8Array(cube.indicies), gl.STATIC_DRAW);
+        new Uint16Array(cube.colors), gl.STATIC_DRAW);
 
 
       this.BodyModels.push();
@@ -86,36 +70,34 @@ class Game{
         // look up where the vertex data needs to go.
         positionLocation = gl.getAttribLocation(program, "a_position");
         colorLocation = gl.getAttribLocation(program, "a_color");
-      
-
-        // lookup uniforms
         matrixLocation = gl.getUniformLocation(program, "u_matrix");
-      
-        // Create a buffer to put positions in
-        positionBuffer = gl.createBuffer();
-        // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        // Put geometry data into buffer
-        setGeometry(gl);
-      
-        // Create a buffer to put colors in
-        colorBuffer = gl.createBuffer();
-        // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = colorBuffer)
-        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-        // Put geometry data into buffer
-        setColors(gl);
-      
-      
-      // Turn on culling. By default backfacing triangles
-          // will be culled.
-          gl.enable(gl.CULL_FACE);
-      
-          // Enable the depth buffer
-          gl.enable(gl.DEPTH_TEST);
-      
-      
-          gl.enableVertexAttribArray(positionLocation);
+        gl.enable(gl.CULL_FACE);
 
+        // Enable the depth buffer
+        gl.enable(gl.DEPTH_TEST);
+        
+        gl.useProgram(program);
+
+        // Turn on the position attribute
+        gl.enableVertexAttribArray(positionLocation);
+        gl.enableVertexAttribArray(colorLocation);
+         // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
+        var size = 3;          // 3 components per iteration
+    var type = gl.FLOAT;   // the data is 32bit floats
+    var normalize = false; // don't normalize the data
+    var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+    var offset = 0;        // start at the beginning of the buffer
+    gl.vertexAttribPointer(
+        positionLocation, size, type, normalize, stride, offset);
+    
+    // Tell the attribute how to get data out of colorBuffer (ARRAY_BUFFER)
+    var size = 3;                 // 3 components per iteration
+    var type = gl.UNSIGNED_BYTE;  // the data is 8bit unsigned values
+    var normalize = true;         // normalize the data (convert from 0-255 to 0-1)
+    var stride = 0;               // 0 = move forward size * sizeof(type) each iteration to get the next position
+    var offset = 0;               // start at the beginning of the buffer
+    gl.vertexAttribPointer(
+        colorLocation, size, type, normalize, stride, offset);
     }
 
     render(){
@@ -129,27 +111,63 @@ class Game{
       
       // Tell it to use our program (pair of shaders)
       gl.useProgram(program);
-  
-      // Turn on the position attribute
-      var transform = new Transform();
-      transform.position = [0,0,0]
-      transform.rotation = [0,0,0]
-      transform.scale = [1,1,1];
-      // Compute the matrices
-      var m4 = new Camera();
-      var matrix = m4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
-      matrix = m4.translate(matrix, transform.position[0], transform.position[1], transform.position[2]);
-      matrix = m4.xRotate(matrix, transform.rotation[0]);
-      matrix = m4.yRotate(matrix, transform.rotation[1]);
-      matrix = m4.zRotate(matrix, transform.rotation[2]);
-      matrix = m4.scale(matrix, transform.scale[0], transform.scale[1], transform.scale[2]);
-  
+      var cameraAngleRadians = degToRad(0);
+      var fieldOfViewRadians = degToRad(60);
+     
+
+    var numFs = 5;
+    var radius = 200;
+
+    // Compute the projection matrix
+    var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    var zNear = 1;
+    var zFar = 2000;
+    var projectionMatrix = m4.perspective(fieldOfViewRadians, aspect, zNear, zFar);
+
+    // Compute the position of the first F
+    var fPosition = [radius, 0, 0];
+
+    // Use matrix math to compute a position on a circle where
+    // the camera is
+    var cameraMatrix = m4.yRotation(cameraAngleRadians);
+    cameraMatrix = m4.translate(cameraMatrix, 0, 0, radius * 1.5);
+
+    // Get the camera's position from the matrix we computed
+    var cameraPosition = [
+      cameraMatrix[12],
+      cameraMatrix[13],
+      cameraMatrix[14],
+    ];
+
+    var up = [0, 1, 0];
+
+    // Compute the camera's matrix using look at.
+    var cameraMatrix = m4.lookAt(cameraPosition, fPosition, up);
+
+    // Make a view matrix from the camera matrix
+    var viewMatrix = m4.inverse(cameraMatrix);
+
+    // Compute a view projection matrix
+    var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
+
+    for (var ii = 0; ii < numFs; ++ii) {
+      var angle = ii * Math.PI * 2 / numFs;
+      var x = Math.cos(angle) * radius;
+      var y = Math.sin(angle) * radius;
+
+      // starting with the view projection matrix
+      // compute a matrix for the F
+      var matrix = m4.translate(viewProjectionMatrix, x, 0, y);
+
       // Set the matrix.
       gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.)
-
-      gl.drawElements(gl.TRIANGLES,8,gl.UNSIGNED_SHORT, 0);
+      // Draw the geometry.
+      var primitiveType = gl.TRIANGLES;
+      var offset = 0;
+      var count = 16 * 6;
+      gl.drawArrays(primitiveType, offset, count);
+    }
   
     }
 }

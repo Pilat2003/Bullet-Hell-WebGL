@@ -2,7 +2,15 @@
   <head>
     <title>NVIDIA Vertex Buffer Object demo</title>
    
-  <body onload="var g = new Game(); g.render()">
+  <body onload="var g = new Game(); g.render();
+  setInterval(function (){
+  x+= 5;
+  y +=4;
+  z +=1;
+  rotation = [degToRad(y), degToRad(x), degToRad(z)];
+  g.render();
+  }, 100)
+  ">
       <canvas id="canvas" width="600" height="600">
       </canvas>
 
@@ -473,6 +481,8 @@ function setGeometry(gl) {
        150,150,0,
        150,0,0]);
 
+
+
   // Center the F around the origin and Flip it around. We do this because
   // we're in 3D now with and +Y is up where as before when we started with 2D
   // we had +Y as down.
@@ -538,12 +548,7 @@ function setColors(gl) {
  }
 
   void main() {
-    if(modulo(gl_FragCoord.x, 5.0) < 1){
-     gl_FragColor = vec4(200,0,0,1);
-    }
-    else{
-      gl_FragColor = vec4(0,200,0,1);
-    }
+     gl_FragColor = v_color;
   }
   </script>
 

@@ -6,6 +6,20 @@ var matrixLocation;
 var positionBuffer;
 var colorBuffer;
 var matrix;
+var translation = [100, 150, 0];
+var x = 0;
+var y = 0;
+var z= 10;
+var rotation = [degToRad(y), degToRad(x), degToRad(z)];
+var scale = [0.5, 0.5, 0.5];
+
+  function radToDeg(r) {
+    return r * 180 / Math.PI;
+  }
+
+  function degToRad(d) {
+    return d * Math.PI / 180;
+  }
 class Vector3{
     x;
     y;
@@ -41,23 +55,115 @@ class Game{
       this.webglSETUP();
       var cube = new BodyModel();
       cube.verts = new Float32Array([
+      //front
        0,0,0,
        0,150,0,
        150,0,0,
+       
        0,150,0,
        150,150,0,
-       150,0,0
+       150,0,0,
+       
+       //right
+       150,0,0,
+       150,150,0,
+       150,0,150,
+       
+       150,150,0,
+       150,150,150,
+       150,0,150,
+       
+       
+       //left
+       0,0,0,
+       0,150,150,
+       0,150,0,
+       
+       0,0,0,
+       0,0,150,
+       0,150,150,
+       
+       
+       //Back
+       150,0,150,
+       150,150,150,
+       0,150,150,
+       
+       0,150,150,
+       0,0,150,
+       150,0,150,
+       
+       //TOP
+       
+       0,150,0,
+       0,150,150,
+       150,150,0,
+       
+       0,150,150,
+       150,150,150,
+       150,150,0,
+       
+       //BOTTOM
+       
+       0,0,0,
+       150,0,0,
+       0,0,150,
+       
+       0,0,150,
+       150,0,0,
+       150,0,150
+       
       ]);
       cube.colors = new Uint8Array([
         250,0,0,
         250,0,0,
+        250,0,0,
+        250,0,0,
+        250,0,0,
+        250,0,0,
+        
         0,250,0,
         0,250,0,
+        0,250,0,
+        0,250,0,
+        0,250,0,
+        0,250,0,
+        
         0,0,250,
-        0,0,250
+        0,0,250,
+        0,0,250,
+        0,0,250,
+        0,0,250,
+        0,0,250,
+        
+        0,250,250,
+        0,250,250,
+        0,250,250,
+        0,250,250,
+        0,250,250,
+        0,250,250,
+        
+        250,250,0,
+        250,250,0,
+        250,250,0,
+        250,250,0,
+        250,250,0,
+        250,250,0,
+        
+        0,0,0,
+        0,0,0,
+        0,0,0,
+        0,0,0,
+        0,0,0,
+        0,0,0
+        
+        
       ]);
+      
+      
       cube.vertsBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, cube.vertsBuffer);
+      cube.verts = center(cube.verts);
       gl.bufferData(gl.ARRAY_BUFFER, cube.verts, gl.STATIC_DRAW);
      
       cube.colorsBuffer = gl.createBuffer();
@@ -88,17 +194,7 @@ class Game{
     }
 
     render(){
-      var translation = [45, 150, 0];
-      var rotation = [degToRad(0), degToRad(0), degToRad(0)];
-      var scale = [1, 1, 1];
-    
-  function radToDeg(r) {
-    return r * 180 / Math.PI;
-  }
-
-  function degToRad(d) {
-    return d * Math.PI / 180;
-  }
+      
 
   var cameraAngleRadians = degToRad(0);
   var fieldOfViewRadians = degToRad(60);
@@ -172,7 +268,7 @@ class Game{
     // Draw the geometry.
     var primitiveType = gl.TRIANGLES;
     var offset = 0;
-    var count = 16 * 6;
+    var count = 6 * 6;
     gl.drawArrays(primitiveType, offset, count);
     
   }
@@ -481,3 +577,17 @@ function radToDeg(r) {
     },
   
   };
+  
+  function center(positions){
+  
+  var matrix = m4.xRotation(Math.PI);
+  matrix = m4.translate(matrix, -50, -75, -15);
+  
+  for (var ii = 0; ii < positions.length; ii += 3) {
+  var vector = m4.vectorMultiply([positions[ii + 0], positions[ii + 1], positions[ii + 2], 1], matrix);
+  positions[ii + 0] = vector[0];
+  positions[ii + 1] = vector[1];
+  positions[ii + 2] = vector[2];
+  }
+  return positions;
+  }

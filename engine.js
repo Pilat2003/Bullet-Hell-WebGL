@@ -21,11 +21,21 @@ var scale = [0.5, 0.5, 0.5];
     return d * Math.PI / 180;
   }
 class Vector3{
+  constructor(x,y,z){
+    this.x = x;
+    this.y = y;
+    this.z = z;
+  }
     x;
     y;
     z;
 }
 class Transform{
+  constructor(){
+    this.position = new Vector3(0,0,0);
+    this.rotation = new Vector3(0,0,0);
+    this.scale = new Vector3(1,1,1);
+  }
     position;
     rotation;
     scale;
@@ -176,15 +186,27 @@ class Game{
       
       
       
-      var object1 = new GameObject(){
+      var object1 = new GameObject();
       object1.id = "objekt";
-      object.name = "cube";
-      object.transform = [position: [x: 0, y: 0, z: 0], 
-      rotation: [x: 0, y: 0, z: 0],
-      scale: [x: 1, y: 1, z: 1];
-      object1.
+      object1.name = "cube";
+      object1.transform = new Transform();
+      object1.transform.position.x = 200;
+      object1.transform.position.y = 150;
+      object1.BodyModel = this.BodyModels[0];
+      object1.ColorModel = this.BodyModels[0];
+      this.GameObjects.push(object1);
+
+      var object2 = new GameObject();
+      object2.id = "objekt";
+      object2.name = "cube";
+      object2.transform = new Transform();
+      object2.transform.position.x = 400;
+      object2.transform.position.y = 400;
+      object2.BodyModel = this.BodyModels[0];
+      object2.ColorModel = this.BodyModels[0];
+     // this.GameObjects.push(object2);
       }
-    }
+    
 
     webglSETUP(){
        
@@ -237,12 +259,12 @@ class Game{
 
     
 
-	for (int i = 0; i < GameObjects.count; i++){
+	for (var i = 0; i < this.GameObjects.length; i++){
 	
 	
   
     // Bind the position buffer.
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.BodyModels[0].vertsBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.GameObjects[i].BodyModel.vertsBuffer);
 
     // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
     var size = 3;          // 3 components per iteration
@@ -257,7 +279,7 @@ class Game{
     gl.enableVertexAttribArray(colorLocation);
 
     // Bind the color buffer.
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.BodyModels[0].colorsBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.GameObjects[i].ColorModel.colorsBuffer);
 
     // Tell the attribute how to get data out of colorBuffer (ARRAY_BUFFER)
     var size = 3;                 // 3 components per iteration
@@ -269,12 +291,23 @@ class Game{
         colorLocation, size, type, normalize, stride, offset);
 
     // Compute the matrices
+
+    
     var matrix = m4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
-    matrix = m4.translate(matrix, translation[0], translation[1], translation[2]);
-    matrix = m4.xRotate(matrix, rotation[0]);
-    matrix = m4.yRotate(matrix, rotation[1]);
-    matrix = m4.zRotate(matrix, rotation[2]);
+    matrix = m4.translate(matrix, this.GameObjects[i].transform.position.x, 
+      this.GameObjects[i].transform.position.y, 
+      this.GameObjects[i].transform.position.z);
+    matrix = m4.xRotate(matrix,  this.GameObjects[i].transform.rotation.x);
+    matrix = m4.yRotate(matrix, this.GameObjects[i].transform.rotation.y);
+    matrix = m4.zRotate(matrix, this.GameObjects[i].transform.rotation.z);
     matrix = m4.scale(matrix, scale[0], scale[1], scale[2]);
+      for (let x = 0; x < 4; x++) {
+        
+        for (let y = 0; y < 4; y++) {
+          var temp = document.getElementById((x + 1 )+"x"+(y + 1));
+          temp.value = matrix[(x * 4) + y];
+        }
+      }
 
     // Set the matrix.
     gl.uniformMatrix4fv(matrixLocation, false, matrix);
@@ -282,7 +315,7 @@ class Game{
     // Draw the geometry.
     var primitiveType = gl.TRIANGLES;
     var offset = 0;
-    var count = ;
+    var count = this.GameObjects[i].BodyModel.verts.length / 3;
     gl.drawArrays(primitiveType, offset, count);
     }
   }

@@ -42,9 +42,9 @@ class Transform{
 
     forward(){
       var dir =  new Vector3();
-      dir.x = Math.cos(degToRad(this.rotation.x));
-      dir.y = Math.cos(degToRad(this.rotation.y));
-      dir.z = Math.cos(degToRad(this.rotation.z));
+      dir.x = Math.sin(degToRad(this.rotation.y)) * Math.cos(degToRad(this.rotation.x));
+      dir.y = Math.sin(degToRad(-this.rotation.x));
+      dir.z = Math.cos(degToRad(this.rotation.x)) * Math.cos(degToRad(this.rotation.y));
       return dir;
     }
   }
@@ -225,9 +225,9 @@ class Game{
       object2.transform.position.x = 0;
       object2.transform.position.y = 0;
       object2.transform.position.z = -300;
-      object2.transform.scale.x = 0.001;
-      object2.transform.scale.y = 0.001;
-      object2.transform.scale.z = 0.001;
+      object2.transform.scale.x = 0.0001;
+      object2.transform.scale.y = 0.0001;
+      object2.transform.scale.z = 0.0001;
       object2.BodyModel = this.BodyModels[0];
       object2.ColorModel = this.BodyModels[0];
       this.GameObjects.push(object2);

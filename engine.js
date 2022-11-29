@@ -39,7 +39,15 @@ class Transform{
     position;
     rotation;
     scale;
-}
+
+    forward(){
+      var dir =  new Vector3();
+      dir.x = Math.cos(degToRad(this.rotation.x));
+      dir.y = Math.cos(degToRad(this.rotation.y));
+      dir.z = Math.cos(degToRad(this.rotation.z));
+      return dir;
+    }
+  }
 class GameObject {
     id;
     name;
@@ -190,7 +198,7 @@ class Game{
       camera.transform = new Transform();
       camera.transform.position.x = 0;
       camera.transform.position.y = 0;
-      camera.transform.position.z = -500;
+      camera.transform.position.z = 0;
       camera.BodyModel = this.BodyModels[0];
       camera.ColorModel = this.BodyModels[0];
       this.camera = camera;
@@ -202,10 +210,10 @@ class Game{
       object1.transform = new Transform();
       object1.transform.position.x = 0;
       object1.transform.position.y = 0;
-      object1.transform.position.z = 0;
-      object1.transform.scale.x = 0.2;
-      object1.transform.scale.y = 0.2;
-      object1.transform.scale.z = 0.2;
+      object1.transform.position.z = 300;
+      object1.transform.scale.x = 0.001;
+      object1.transform.scale.y = 0.001;
+      object1.transform.scale.z = 0.001;
       object1.BodyModel = this.BodyModels[0];
       object1.ColorModel = this.BodyModels[0];
       this.GameObjects.push(object1);
@@ -214,11 +222,15 @@ class Game{
       object2.id = "objekt";
       object2.name = "cube";
       object2.transform = new Transform();
-      object2.transform.position.x = 400;
-      object2.transform.position.y = 400;
+      object2.transform.position.x = 0;
+      object2.transform.position.y = 0;
+      object2.transform.position.z = -300;
+      object2.transform.scale.x = 0.001;
+      object2.transform.scale.y = 0.001;
+      object2.transform.scale.z = 0.001;
       object2.BodyModel = this.BodyModels[0];
       object2.ColorModel = this.BodyModels[0];
-     // this.GameObjects.push(object2);
+      this.GameObjects.push(object2);
       }
     
 
@@ -307,21 +319,21 @@ class Game{
     // Compute the matrices
 
     var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    var zNear = 0.1;
+    var zNear = 0.001;
     var zFar = 2000;
     var projectionMatrix = m4.perspective((60 * 3.14 / 180), aspect, zNear, zFar);
-    
-    var cameraMatrix = m4.translate(projectionMatrix, this.camera.transform.position.x, 
+    var cameraMatrix = m4.yRotation(0);
+    cameraMatrix = m4.translate(cameraMatrix, this.camera.transform.position.x, 
     this.camera.transform.position.y, 
     this.camera.transform.position.z);
-    cameraMatrix = m4.xRotate(cameraMatrix,  this.camera.transform.rotation.x);
-    cameraMatrix = m4.yRotate(cameraMatrix, this.camera.transform.rotation.y);
-    cameraMatrix = m4.zRotate(cameraMatrix, this.camera.transform.rotation.z);
+    cameraMatrix = m4.xRotate(cameraMatrix, degToRad(this.camera.transform.rotation.x));
+    cameraMatrix = m4.yRotate(cameraMatrix, degToRad(this.camera.transform.rotation.y));
+    cameraMatrix = m4.zRotate(cameraMatrix, degToRad(this.camera.transform.rotation.z));
     
     var viewMatrix = m4.inverse(cameraMatrix);
-    console.log(projectionMatrix);
+    
     var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
-    console.log(projectionMatrix);
+
     var matrix = m4.translate(viewProjectionMatrix, this.GameObjects[i].transform.position.x, 
       this.GameObjects[i].transform.position.y, 
       this.GameObjects[i].transform.position.z);
@@ -348,7 +360,7 @@ class Game{
     }
   }
   
-}
+}console.log(Math.cos(degToRad(91)));
 
   function center(positions){
   

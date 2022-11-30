@@ -47,6 +47,20 @@ class Transform{
       dir.z = Math.cos(degToRad(this.rotation.x)) * Math.cos(degToRad(this.rotation.y));
       return dir;
     }
+    right(){
+    var dir =  new Vector3();
+     dir.x = Math.sin(degToRad(this.rotation.y)) * Math.cos(degToRad(this.rotation.x));
+     dir.y = Math.sin(degToRad(-this.rotation.x));
+     dir.z = Math.cos(degToRad(this.rotation.x)) * Math.cos(degToRad(this.rotation.y));
+     return dir;
+    }
+    up(){
+    var dir =  new Vector3();
+    dir.x = Math.sin(degToRad(this.rotation.y)) * Math.cos(degToRad(this.rotation.x));
+    dir.y = Math.sin(degToRad(-this.rotation.x));
+    dir.z = Math.cos(degToRad(this.rotation.x)) * Math.cos(degToRad(this.rotation.y));
+    return dir;
+    }
   }
 class GameObject {
     id;
@@ -203,7 +217,7 @@ class Game{
       camera.ColorModel = this.BodyModels[0];
       this.camera = camera;
       
-      console.log(this.camera)
+      
       var object1 = new GameObject();
       object1.id = "objekt";
       object1.name = "cube";
@@ -341,13 +355,7 @@ class Game{
     matrix = m4.yRotate(matrix, this.GameObjects[i].transform.rotation.y);
     matrix = m4.zRotate(matrix, this.GameObjects[i].transform.rotation.z);
     matrix = m4.scale(matrix, scale[0], scale[1], scale[2]);
-      for (let x = 0; x < 4; x++) {
-        
-        for (let y = 0; y < 4; y++) {
-          var temp = document.getElementById((x + 1 )+"x"+(y + 1));
-          temp.value = matrix[(x * 4) + y];
-        }
-      }
+      
 
     // Set the matrix.
     gl.uniformMatrix4fv(matrixLocation, false, matrix);
@@ -360,7 +368,7 @@ class Game{
     }
   }
   
-}console.log(Math.cos(degToRad(91)));
+}
 
   function center(positions){
   

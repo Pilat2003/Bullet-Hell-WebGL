@@ -13,6 +13,14 @@ var z= 10;
 var rotation = [degToRad(y), degToRad(x), degToRad(z)];
 var scale = [0.5, 0.5, 0.5];
 
+function ClampAngle(x){
+  if(x < 0){
+  return 360 + (x % 360);
+  }
+  return x % 360;
+  }
+
+
   function radToDeg(r) {
     return r * 180 / Math.PI;
   }
@@ -49,9 +57,9 @@ class Transform{
     }
     right(){
     var dir =  new Vector3();
-     dir.x = Math.sin(degToRad((this.rotation.y + 90) % 360)) * Math.cos(degToRad(this.rotation.x));
-     dir.y = Math.sin(degToRad(-this.rotation.x));
-     dir.z = Math.cos(degToRad(this.rotation.x)) * Math.cos(degToRad((this.rotation.y + 90) % 360));
+     dir.x = Math.sin(degToRad(ClampAngle(this.rotation.y + 90))) * Math.cos(degToRad(ClampAngle(this.rotation.x)));
+     dir.y = Math.sin(degToRad(-ClampAngle(this.rotation.x)));
+     dir.z = Math.cos(degToRad(ClampAngle(this.rotation.x))) * Math.cos(degToRad(ClampAngle(this.rotation.y + 90) % 360));
      return dir;
     }
     up(){

@@ -61,9 +61,7 @@
     console.log(g.camera.transform.rotation);
 });
 
-  setInterval(function (){
-  g.render();
-  }, 1000 / 30)
+  
   
 
 
@@ -99,6 +97,20 @@
   function mouseUp(x){
     isMouseHolded = false;
   }
+  
+  
+  function ClampAngle(x){
+  if(x < 0){
+  return 360 + (x % 360);
+  }
+  return x % 360;
+  }
+  
+  
+  
+  setInterval(function (){
+  g.render();
+  }, 1000 / 30)
 </script>
 <script  id="vertex-shader-3d" type="x-shader/x-vertex">
   attribute vec4 a_position;

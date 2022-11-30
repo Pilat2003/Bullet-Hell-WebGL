@@ -49,9 +49,9 @@ class Transform{
     }
     right(){
     var dir =  new Vector3();
-     dir.x = Math.sin(degToRad(this.rotation.y)) * Math.cos(degToRad(this.rotation.x));
+     dir.x = Math.sin(degToRad((this.rotation.y + 90) % 360)) * Math.cos(degToRad(this.rotation.x));
      dir.y = Math.sin(degToRad(-this.rotation.x));
-     dir.z = Math.cos(degToRad(this.rotation.x)) * Math.cos(degToRad(this.rotation.y));
+     dir.z = Math.cos(degToRad(this.rotation.x)) * Math.cos(degToRad((this.rotation.y + 90) % 360));
      return dir;
     }
     up(){

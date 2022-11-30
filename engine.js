@@ -53,6 +53,7 @@ class Transform{
       dir.x = Math.sin(degToRad(this.rotation.y)) * Math.cos(degToRad(this.rotation.x));
       dir.y = Math.sin(degToRad(-this.rotation.x));
       dir.z = Math.cos(degToRad(this.rotation.x)) * Math.cos(degToRad(this.rotation.y));
+      
       return dir;
     }
     right(){
@@ -60,6 +61,10 @@ class Transform{
      dir.x = Math.sin(degToRad(ClampAngle(this.rotation.y + 90))) * Math.cos(degToRad(ClampAngle(this.rotation.x)));
      dir.y = Math.sin(degToRad(-ClampAngle(this.rotation.x)));
      dir.z = Math.cos(degToRad(ClampAngle(this.rotation.x))) * Math.cos(degToRad(ClampAngle(this.rotation.y + 90) % 360));
+     console.log('rotation');
+      console.log(this.rotation);
+      console.log('right')
+      console.log(dir);
      return dir;
     }
     up(){
@@ -253,6 +258,20 @@ class Game{
       object2.BodyModel = this.BodyModels[0];
       object2.ColorModel = this.BodyModels[0];
       this.GameObjects.push(object2);
+
+      var object3 = new GameObject();
+      object3.id = "objekt";
+      object3.name = "cube";
+      object3.transform = new Transform();
+      object3.transform.position.x = 0;
+      object3.transform.position.y = -300;
+      object3.transform.position.z = 0;
+      object3.transform.scale.x = 0.0001;
+      object3.transform.scale.y = 0.0001;
+      object3.transform.scale.z = 0.0001;
+      object3.BodyModel = this.BodyModels[0];
+      object3.ColorModel = this.BodyModels[0];
+      this.GameObjects.push(object3);
       }
     
 

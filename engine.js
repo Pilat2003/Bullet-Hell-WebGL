@@ -211,6 +211,58 @@ class Game{
       gl.bindBuffer(gl.ARRAY_BUFFER, cube.colorsBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, cube.colors, gl.STATIC_DRAW);
 
+      var custom = new BodyModel();
+      custom.verts = cube.verts;
+      custom.vertsBuffer = cube.vertsBuffer;
+      custom.colors = new Uint8Array([
+        250,0,0,
+        250,0,0,
+        250,0,0,
+        250,0,0,
+        250,0,0,
+        250,0,0,
+        
+        0,250,0,
+        0,250,0,
+        0,250,0,
+        0,250,0,
+        0,250,0,
+        0,250,0,
+        
+        0,0,0,
+        0,0,0,
+        0,0,0,
+        0,0,0,
+        0,0,0,
+        0,0,0,
+        
+        0,0,0,
+        0,0,0,
+        0,0,0,
+        0,0,0,
+        0,0,0,
+        0,0,0,
+        
+        0,0,250,
+        0,0,250,
+        0,0,250,
+        0,0,250,
+        0,0,250,
+        0,0,250,
+        
+        0,0,0,
+        0,0,0,
+        0,0,0,
+        0,0,0,
+        0,0,0,
+        0,0,0
+        
+        
+      ]);
+
+      custom.colorsBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, custom.colorsBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, custom.colors, gl.STATIC_DRAW);
 
       this.BodyModels.push(cube);
       
@@ -219,8 +271,11 @@ class Game{
       camera.name = "camera";
       camera.transform = new Transform();
       camera.transform.position.x = 0;
-      camera.transform.position.y = 0;
+      camera.transform.position.y = 400;
       camera.transform.position.z = 0;
+      camera.transform.rotation.x = -90;
+      camera.transform.rotation.y = 0;
+      camera.transform.rotation.z = 0;
       camera.BodyModel = this.BodyModels[0];
       camera.ColorModel = this.BodyModels[0];
       this.camera = camera;
@@ -232,7 +287,7 @@ class Game{
       object1.transform = new Transform();
       object1.transform.position.x = 0;
       object1.transform.position.y = 0;
-      object1.transform.position.z = 300;
+      object1.transform.position.z = 400;
       object1.transform.scale.x = 0.001;
       object1.transform.scale.y = 0.001;
       object1.transform.scale.z = 0.001;
@@ -246,13 +301,32 @@ class Game{
       object2.transform = new Transform();
       object2.transform.position.x = 0;
       object2.transform.position.y = 0;
-      object2.transform.position.z = -300;
-      object2.transform.scale.x = 0.0001;
-      object2.transform.scale.y = 0.0001;
-      object2.transform.scale.z = 0.0001;
+      object2.transform.position.z = -400;
+      object2.transform.scale.x = 0.001;
+      object2.transform.scale.y = 0.001;
+      object2.transform.scale.z = 0.001;
       object2.BodyModel = this.BodyModels[0];
       object2.ColorModel = this.BodyModels[0];
       this.GameObjects.push(object2);
+
+
+
+
+      var parent = new GameObject();
+      parent.id = "parent";
+      parent.name = "cube";
+      parent.transform = new Transform();
+      parent.transform.position.x = 0;
+      parent.transform.position.y = 0;
+      parent.transform.position.z = 0;
+      parent.transform.scale.x = 0.001;
+      parent.transform.scale.y = 0.001;
+      parent.transform.scale.z = 0.001;
+      parent.BodyModel = this.BodyModels[0];
+      parent.ColorModel = custom;
+      this.GameObjects.push(parent);
+
+
       }
     
 

@@ -51,7 +51,7 @@ class Transform{
     forward(){
       var dir =  new Vector3();
       dir.x = Math.sin(degToRad(this.rotation.y)) * Math.cos(degToRad(this.rotation.x));
-      dir.y = Math.sin(degToRad(-this.rotation.x));
+      dir.y = Math.sin(-degToRad(this.rotation.x));
       dir.z = Math.cos(degToRad(this.rotation.x)) * Math.cos(degToRad(this.rotation.y));
       return dir;
     }
@@ -271,9 +271,9 @@ class Game{
       camera.name = "camera";
       camera.transform = new Transform();
       camera.transform.position.x = 0;
-      camera.transform.position.y = 400;
+      camera.transform.position.y = 0;
       camera.transform.position.z = 0;
-      camera.transform.rotation.x = -90;
+      camera.transform.rotation.x = 0;
       camera.transform.rotation.y = 0;
       camera.transform.rotation.z = 0;
       camera.BodyModel = this.BodyModels[0];
@@ -322,9 +322,27 @@ class Game{
       parent.transform.scale.x = 0.001;
       parent.transform.scale.y = 0.001;
       parent.transform.scale.z = 0.001;
+      parent.transform.rotation.x = 0;
+      parent.transform.rotation.y = 0;
+      parent.transform.rotation.z = 0;
       parent.BodyModel = this.BodyModels[0];
       parent.ColorModel = custom;
       this.GameObjects.push(parent);
+
+      var child = new GameObject();
+      child.id = "child";
+      child.name = "cube";
+      child.transform = new Transform();
+      child.transform.position.x = 0;
+      child.transform.position.y = 0;
+      child.transform.position.z = 0;
+      child.transform.scale.x = 0.001;
+      child.transform.scale.y = 0.001;
+      child.transform.scale.z = 0.001;
+      child.BodyModel = this.BodyModels[0];
+      child.ColorModel = custom;
+      this.GameObjects.push(child);
+
 
 
       }
@@ -433,9 +451,9 @@ class Game{
     var matrix = m4.translate(viewProjectionMatrix, this.GameObjects[i].transform.position.x, 
       this.GameObjects[i].transform.position.y, 
       this.GameObjects[i].transform.position.z);
-    matrix = m4.xRotate(matrix,  this.GameObjects[i].transform.rotation.x);
-    matrix = m4.yRotate(matrix, this.GameObjects[i].transform.rotation.y);
-    matrix = m4.zRotate(matrix, this.GameObjects[i].transform.rotation.z);
+    matrix = m4.xRotate(matrix,  degToRad(this.GameObjects[i].transform.rotation.x));
+    matrix = m4.yRotate(matrix, degToRad(this.GameObjects[i].transform.rotation.y));
+    matrix = m4.zRotate(matrix, degToRad(this.GameObjects[i].transform.rotation.z));
     matrix = m4.scale(matrix, scale[0], scale[1], scale[2]);
       
 

@@ -46,6 +46,27 @@
      if(event.keyCode == 83) {
       g.camera.transform.rotation.x += 1.20
     }
+    if(event.keyCode == 100) {
+      g.GameObjects[2].transform.rotation.y +=2;
+    }
+    if(event.keyCode == 102) {
+      g.GameObjects[2].transform.rotation.y += -2;
+    }
+    if(event.keyCode == 104) {
+      g.GameObjects[2].transform.rotation.x +=2;
+    }
+    if(event.keyCode == 98) {
+      g.GameObjects[2].transform.rotation.x += -2;
+    }
+      console.log('temp');
+      var temp = g.GameObjects[2].transform.forward();
+      console.log(temp);
+      console.log( g.GameObjects[3].id);
+      g.GameObjects[3].transform.position.x =  g.GameObjects[2].transform.position.x + temp.x * 100;
+      g.GameObjects[3].transform.position.y = g.GameObjects[2].transform.position.y + temp.y * 100;
+      g.GameObjects[3].transform.position.z = g.GameObjects[2].transform.position.z + temp.z * 100;
+
+
     //g.GameObjects[1].transform.position.x = g.camera.transform.position.x + temp.x * -300;
    // g.GameObjects[1].transform.position.y = g.camera.transform.position.y + temp.y * -300; 
     //g.GameObjects[1].transform.position.z = g.camera.transform.position.z + temp.z * -300;
@@ -58,7 +79,6 @@
    // console.log(g.GameObjects[1].transform.position);
    // console.log('POS Camerea');
     //console.log(g.camera.transform.position);
-    console.log(g.camera.transform.rotation);
 });
 
   

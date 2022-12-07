@@ -7,6 +7,53 @@
   <body onload="var g = new Game(); g.render(); globalThis.g = g;
   document.addEventListener('keydown', function(event) {
     var temp =  g.camera.transform.forward();
+    function ToEulerAngles( q) {
+    var angles = new Vector3();
+
+    // roll (x-axis rotation)
+    var sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
+    var cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
+    angles.x = Math.atan2(sinr_cosp, cosr_cosp);
+
+    // pitch (y-axis rotation)
+    var sinp = 2 * (q.w * q.y - q.z * q.x);
+    if (Math.abs(sinp) >= 1)
+        angles.y = Math.copysign(M_PI / 2, sinp); // use 90 degrees if out of range
+    else
+        angles.y = Math.asin(sinp);
+
+    // yaw (z-axis rotation)
+    var siny_cosp = 2 * (q.w * q.z + q.x * q.y);
+    var cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
+    angles.z = Math.atan2(siny_cosp, cosy_cosp);
+
+    return angles;
+}
+
+  function Look(rotation,  point)
+    {
+      var num1 = rotation.x * 2;
+      var num2 = rotation.y * 2;
+      var num3 = rotation.z * 2;
+      var num4 = rotation.x * num1;
+      var num5 = rotation.y * num2;
+      var num6 = rotation.z * num3;
+      var num7 = rotation.x * num2;
+      var num8 = rotation.x * num3;
+      var num9 = rotation.y * num3;
+      var num10 = 1 * num1;
+      var num11 = 1 * num2;
+      var num12 = 1 * num3;
+      var vector3 = new Vector3();
+      vector3.x = 0;
+      vector3.y = 0;
+      vector3.z = 0;
+      console.log(point);
+      vector3.x = ((1.0 - ( num5 +  num6)) *  point.x + ( num7 -  num12) *  point.y + ( num8 +  num11) *  point.z);
+      vector3.y =  (( num7 +  num12) *  point.x + (1.0 - ( num4 +  num6)) *  point.y + ( num9 -  num10) *  point.z);
+      vector3.z =  (( num8 -  num11) *  point.x + ( num9 +  num10) *  point.y + (1.0 - ( num4 +  num5)) *  point.z);
+      return vector3;
+    }
     
     if(event.keyCode == 37) {
       var temp =  g.camera.transform.right();
@@ -59,9 +106,10 @@
       g.GameObjects[2].transform.rotation.x += -2;
     }
       console.log('temp');
-      var temp = g.GameObjects[2].transform.forward();
+      var x = new Vector3();
+      x.x = 1;
+      var temp = Look( g.GameObjects[2].transform.forward(), x);
       console.log(temp);
-      console.log( g.GameObjects[3].id);
       g.GameObjects[3].transform.position.x =  g.GameObjects[2].transform.position.x + temp.x * 100;
       g.GameObjects[3].transform.position.y = g.GameObjects[2].transform.position.y + temp.y * 100;
       g.GameObjects[3].transform.position.z = g.GameObjects[2].transform.position.z + temp.z * 100;

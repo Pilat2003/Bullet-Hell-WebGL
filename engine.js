@@ -28,6 +28,49 @@ function ClampAngle(x){
   function degToRad(d) {
     return d * Math.PI / 180;
   }
+  function ToEulerAngles( q) {
+    var angles = new Vector3();
+
+    // roll (x-axis rotation)
+    var sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
+    var cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
+    angles.x = Math.atan2(sinr_cosp, cosr_cosp);
+
+    // pitch (y-axis rotation)
+    var sinp = 2 * (q.w * q.y - q.z * q.x);
+    if (Math.abs(sinp) >= 1)
+        angles.y = Math.copysign(M_PI / 2, sinp); // use 90 degrees if out of range
+    else
+        angles.y = Math.asin(sinp);
+
+    // yaw (z-axis rotation)
+    var siny_cosp = 2 * (q.w * q.z + q.x * q.y);
+    var cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
+    angles.z = Math.atan2(siny_cosp, cosy_cosp);
+
+    return angles;
+}
+
+  function Look(rotation,  point)
+    {
+      var num1 = rotation.x * 2;
+      var num2 = rotation.y * 2;
+      var num3 = rotation.z * 2;
+      var num4 = rotation.x * num1;
+      var num5 = rotation.y * num2;
+      var num6 = rotation.z * num3;
+      var num7 = rotation.x * num2;
+      var num8 = rotation.x * num3;
+      var num9 = rotation.y * num3;
+      var num10 = rotation.w * num1;
+      var num11 = rotation.w * num2;
+      var num12 = rotation.w * num3;
+      var vector3 = new Vector3();
+      vector3.x = ((1.0 - ( num5 +  num6)) *  point.x + ( num7 -  num12) *  point.y + ( num8 +  num11) *  point.z);
+      vector3.y =  (( num7 +  num12) *  point.x + (1.0 - ( num4 +  num6)) *  point.y + ( num9 -  num10) *  point.z);
+      vector3.z =  (( num8 -  num11) *  point.x + ( num9 +  num10) *  point.y + (1.0 - ( num4 +  num5)) *  point.z);
+      return vector3;
+    }
 class Vector3{
   constructor(x,y,z){
     this.x = x;
@@ -49,10 +92,17 @@ class Transform{
     scale;
 
     forward(){
-      var dir =  new Vector3();
-      dir.x = Math.sin(degToRad(this.rotation.y)) * Math.cos(degToRad(this.rotation.x));
-      dir.y = Math.sin(-degToRad(this.rotation.x));
-      dir.z = Math.cos(degToRad(this.rotation.x)) * Math.cos(degToRad(this.rotation.y));
+      //var dir =  new Vector3();
+      //dir.x = Math.sin(degToRad(this.rotation.y)) * Math.cos(degToRad(this.rotation.x));
+      //dir.y = Math.sin(-degToRad(this.rotation.x));
+      //dir.z = Math.cos(degToRad(this.rotation.x)) * Math.cos(degToRad(this.rotation.y));
+      //return dir;
+
+      var dir = new Vector3();
+      dir.x = Math.cos((this.rotation.x));
+      dir.y = Math.cos((this.rotation.y));
+      dir.z = Math.cos((this.rotation.z));
+      console.log(Math.cos(degToRad(this.rotation.x))* Math.cos(degToRad(this.rotation.x)) +  Math.cos(degToRad(this.rotation.y))* Math.cos(degToRad(this.rotation.y)) + Math.cos(degToRad(this.rotation.z))*Math.cos(degToRad(this.rotation.z)))
       return dir;
     }
     right(){

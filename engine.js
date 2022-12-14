@@ -6,12 +6,8 @@ var matrixLocation;
 var positionBuffer;
 var colorBuffer;
 var matrix;
-var translation = [100, 150, 0];
-var x = 0;
-var y = 0;
-var z= 10;
-var rotation = [degToRad(y), degToRad(x), degToRad(z)];
-var scale = [0.5, 0.5, 0.5];
+var functionIDLocation;
+
 
 function ClampAngle(x){
   if(x < 0){
@@ -129,6 +125,7 @@ class BodyModel{
     colorsBuffer;
     verts;
     vertsBuffer;
+    functionID;
 }
 class Game{
 	
@@ -138,6 +135,7 @@ class Game{
     constructor(){
       this.webglSETUP();
       var cube = new BodyModel();
+      cube.functionID = 0;
       cube.verts = new Float32Array([
       //front
        0,0,0,
@@ -255,6 +253,7 @@ class Game{
       gl.bufferData(gl.ARRAY_BUFFER, cube.colors, gl.STATIC_DRAW);
 
       var custom = new BodyModel();
+      custom.functionID = 0;
       custom.verts = cube.verts;
       custom.vertsBuffer = cube.vertsBuffer;
       custom.colors = new Uint8Array([
@@ -308,6 +307,49 @@ class Game{
       gl.bufferData(gl.ARRAY_BUFFER, custom.colors, gl.STATIC_DRAW);
 
       this.BodyModels.push(cube);
+
+
+
+      var plane = new BodyModel();
+      plane.functionID = 1;
+      plane.verts = new Float32Array([
+      //front
+        150,0,150,
+        0,0,150,
+        0,0,0,
+
+       0,0,0,
+       150,0,0,
+       150,0,150
+      ]);
+      plane.colors = new Uint8Array([
+        250,0,0,
+        250,0,0,
+        250,0,0,
+        250,0,0,
+        250,0,0,
+        250,0,0
+      ]);
+      
+      
+      plane.vertsBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, plane.vertsBuffer);
+      plane.verts = center(plane.verts);
+      gl.bufferData(gl.ARRAY_BUFFER, plane.verts, gl.STATIC_DRAW);
+     
+      plane.colorsBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, plane.colorsBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, plane.colors, gl.STATIC_DRAW);
+
+
+
+      this.BodyModels.push(plane);
+
+
+
+
+
+
       
       var camera = new GameObject();
       camera.id = "camera";
@@ -323,72 +365,38 @@ class Game{
       camera.ColorModel = this.BodyModels[0];
       this.camera = camera;
       
-      
-      var object1 = new GameObject();
-      object1.id = "objekt";
-      object1.name = "cube";
-      object1.transform = new Transform();
-      object1.transform.position.x = 0;
-      object1.transform.position.y = 0;
-      object1.transform.position.z = 400;
-      object1.transform.scale.x = 0.001;
-      object1.transform.scale.y = 0.001;
-      object1.transform.scale.z = 0.001;
-      object1.BodyModel = this.BodyModels[0];
-      object1.ColorModel = this.BodyModels[0];
-      this.GameObjects.push(object1);
-
       var object2 = new GameObject();
       object2.id = "objekt";
       object2.name = "cube";
       object2.transform = new Transform();
       object2.transform.position.x = 0;
-      object2.transform.position.y = 0;
+      object2.transform.position.y = 100;
       object2.transform.position.z = -400;
-      object2.transform.scale.x = 0.001;
-      object2.transform.scale.y = 0.001;
-      object2.transform.scale.z = 0.001;
+      object2.transform.rotation.x = -20;
+      object2.transform.rotation.y = 0;
+      object2.transform.rotation.z = 0;
+      object2.transform.scale.x = 1;
+      object2.transform.scale.y = 1;
+      object2.transform.scale.z = 1;
       object2.BodyModel = this.BodyModels[0];
       object2.ColorModel = this.BodyModels[0];
       this.GameObjects.push(object2);
 
 
-
-
-      var parent = new GameObject();
-      parent.id = "parent";
-      parent.name = "cube";
-      parent.transform = new Transform();
-      parent.transform.position.x = 0;
-      parent.transform.position.y = 0;
-      parent.transform.position.z = 0;
-      parent.transform.scale.x = 0.001;
-      parent.transform.scale.y = 0.001;
-      parent.transform.scale.z = 0.001;
-      parent.transform.rotation.x = 0;
-      parent.transform.rotation.y = 0;
-      parent.transform.rotation.z = 0;
-      parent.BodyModel = this.BodyModels[0];
-      parent.ColorModel = custom;
-      this.GameObjects.push(parent);
-
-      var child = new GameObject();
-      child.id = "child";
-      child.name = "cube";
-      child.transform = new Transform();
-      child.transform.position.x = 0;
-      child.transform.position.y = 0;
-      child.transform.position.z = 0;
-      child.transform.scale.x = 0.001;
-      child.transform.scale.y = 0.001;
-      child.transform.scale.z = 0.001;
-      child.BodyModel = this.BodyModels[0];
-      child.ColorModel = custom;
-      this.GameObjects.push(child);
-
-
-
-      }
+      var object3 = new GameObject();
+      object3.id = "objekt";
+      object3.name = "cube";
+      object3.transform = new Transform();
+      object3.transform.position.x = 0;
+      object3.transform.position.y = 0;
+      object3.transform.position.z = 0;
+      object3.transform.scale.x = 100;
+      object3.transform.scale.y = 100;
+      object3.transform.scale.z = 100;
+      object3.BodyModel = this.BodyModels[1];
+      object3.ColorModel = this.BodyModels[1];
+      this.GameObjects.push(object3);
+    }
     
 
     webglSETUP(){
@@ -407,6 +415,7 @@ class Game{
     
       // lookup uniforms
        matrixLocation = gl.getUniformLocation(program, "u_matrix");
+       functionIDLocation = gl.getUniformLocation(program, "functionID");
     
     }
 
@@ -473,11 +482,12 @@ class Game{
     gl.vertexAttribPointer(
         colorLocation, size, type, normalize, stride, offset);
 
+        gl.se
     // Compute the matrices
 
     var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     var zNear = 0.001;
-    var zFar = 2000;
+    var zFar = 20000;
     var projectionMatrix = m4.perspective((60 * 3.14 / 180), aspect, zNear, zFar);
     var cameraMatrix = m4.yRotation(0);
     cameraMatrix = m4.translate(cameraMatrix, this.camera.transform.position.x, 
@@ -497,12 +507,12 @@ class Game{
     matrix = m4.xRotate(matrix,  degToRad(this.GameObjects[i].transform.rotation.x));
     matrix = m4.yRotate(matrix, degToRad(this.GameObjects[i].transform.rotation.y));
     matrix = m4.zRotate(matrix, degToRad(this.GameObjects[i].transform.rotation.z));
-    matrix = m4.scale(matrix, scale[0], scale[1], scale[2]);
+    matrix = m4.scale(matrix, this.GameObjects[i].transform.scale.x, this.GameObjects[i].transform.scale.y, this.GameObjects[i].transform.scale.z);
       
 
     // Set the matrix.
     gl.uniformMatrix4fv(matrixLocation, false, matrix);
-
+    gl.uniform1i(functionIDLocation, this.GameObjects[i].BodyModel.functionID);
     // Draw the geometry.
     var primitiveType = gl.TRIANGLES;
     var offset = 0;
@@ -513,10 +523,22 @@ class Game{
   
 }
 
+function findFurther(positions){
+  var x = positions[0];
+  var y = positions[1];
+  var z = positions[2];
+  for (var ii = 0; ii < positions.length; ii += 3) {
+    if(x < positions[ii + 0]) x = positions[ii + 0] ;
+    if(y < positions[ii + 1]) y = positions[ii + 1] ;
+    if(z < positions[ii + 2]) z = positions[ii + 2] ;
+    }
+    return[-((x)/2),-((y)/2),-((z)/2)];
+}
   function center(positions){
   
   var matrix = xRotation(Math.PI);
-  matrix = translate(matrix, -75, -75, -75);
+  var f = findFurther(positions);
+  matrix = translate(matrix, f[0], f[1], f[2]);
   
   for (var ii = 0; ii < positions.length; ii += 3) {
   var vector = vectorMultiply([positions[ii + 0], positions[ii + 1], positions[ii + 2], 1], matrix);
@@ -526,6 +548,7 @@ class Game{
   }
   return positions;
   }
+
  var m4 = {
  
  lookAt: function(cameraPosition, target, up) {

@@ -92,23 +92,16 @@ class Transform{
     scale;
 
     forward(){
-      //var dir =  new Vector3();
-      //dir.x = Math.sin(degToRad(this.rotation.y)) * Math.cos(degToRad(this.rotation.x));
-      //dir.y = Math.sin(-degToRad(this.rotation.x));
-      //dir.z = Math.cos(degToRad(this.rotation.x)) * Math.cos(degToRad(this.rotation.y));
-      //return dir;
-
-      var dir = new Vector3();
-      dir.x = Math.cos((this.rotation.x));
-      dir.y = Math.cos((this.rotation.y));
-      dir.z = Math.cos((this.rotation.z));
-      console.log(Math.cos(degToRad(this.rotation.x))* Math.cos(degToRad(this.rotation.x)) +  Math.cos(degToRad(this.rotation.y))* Math.cos(degToRad(this.rotation.y)) + Math.cos(degToRad(this.rotation.z))*Math.cos(degToRad(this.rotation.z)))
+      var dir =  new Vector3();
+      dir.x = Math.sin(degToRad(this.rotation.y)) * Math.cos(degToRad(this.rotation.x));
+      dir.y = Math.sin(-degToRad(this.rotation.x));
+      dir.z = Math.cos(degToRad(this.rotation.x)) * Math.cos(degToRad(this.rotation.y));
       return dir;
     }
     right(){
     var dir =  new Vector3();
      dir.x = Math.sin(degToRad(ClampAngle(this.rotation.y + 90))) * Math.cos(degToRad(ClampAngle(this.rotation.x)));
-     dir.y = Math.sin(degToRad(-ClampAngle(this.rotation.x)));
+     dir.y = Math.sin(-degToRad(ClampAngle(this.rotation.x)));
      dir.z = Math.cos(degToRad(ClampAngle(this.rotation.x))) * Math.cos(degToRad(ClampAngle(this.rotation.y + 90) % 360));
      return dir;
     }

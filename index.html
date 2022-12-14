@@ -7,6 +7,7 @@
   <body onload="var g = new Game(); g.render(); globalThis.g = g;
   document.addEventListener('keydown', function(event) {
     var temp =  g.camera.transform.forward();
+    
     function ToEulerAngles( q) {
     var angles = new Vector3();
 
@@ -29,31 +30,16 @@
 
     return angles;
 }
-
-  function Look(rotation,  point)
-    {
-      var num1 = rotation.x * 2;
-      var num2 = rotation.y * 2;
-      var num3 = rotation.z * 2;
-      var num4 = rotation.x * num1;
-      var num5 = rotation.y * num2;
-      var num6 = rotation.z * num3;
-      var num7 = rotation.x * num2;
-      var num8 = rotation.x * num3;
-      var num9 = rotation.y * num3;
-      var num10 = 1 * num1;
-      var num11 = 1 * num2;
-      var num12 = 1 * num3;
-      var vector3 = new Vector3();
-      vector3.x = 0;
-      vector3.y = 0;
-      vector3.z = 0;
-      console.log(point);
-      vector3.x = ((1.0 - ( num5 +  num6)) *  point.x + ( num7 -  num12) *  point.y + ( num8 +  num11) *  point.z);
-      vector3.y =  (( num7 +  num12) *  point.x + (1.0 - ( num4 +  num6)) *  point.y + ( num9 -  num10) *  point.z);
-      vector3.z =  (( num8 -  num11) *  point.x + ( num9 +  num10) *  point.y + (1.0 - ( num4 +  num5)) *  point.z);
-      return vector3;
-    }
+function degToRad(d) {
+    return d * Math.PI / 180;
+  }
+  function ClampAngle(x){
+  if(x < 0){
+  return 360 + (x % 360);
+  }
+  return x % 360;
+  }
+  
     
     if(event.keyCode == 37) {
       var temp =  g.camera.transform.right();
@@ -105,14 +91,7 @@
     if(event.keyCode == 71) {
       g.GameObjects[2].transform.rotation.x += -2;
     }
-      console.log('temp');
-      var x = new Vector3();
-      x.x = 1;
-      var temp = Look( g.GameObjects[2].transform.forward(), x);
-      console.log(temp);
-      g.GameObjects[3].transform.position.x =  g.GameObjects[2].transform.position.x + temp.x * 100;
-      g.GameObjects[3].transform.position.y = g.GameObjects[2].transform.position.y + temp.y * 100;
-      g.GameObjects[3].transform.position.z = g.GameObjects[2].transform.position.z + temp.z * 100;
+     
 
 
     //g.GameObjects[1].transform.position.x = g.camera.transform.position.x + temp.x * -300;

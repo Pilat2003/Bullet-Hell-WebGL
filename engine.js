@@ -1,3 +1,5 @@
+//https://www.shadertoy.com/view/XtcSzf
+//https://www.shadertoy.com/view/Xt2cDt
 var gl;
 var program;
 var positionLocation;
@@ -536,7 +538,7 @@ function findFurther(positions){
 }
   function center(positions){
   
-  var matrix = xRotation(Math.PI);
+  var matrix = xRotation(degToRad(0));
   var f = findFurther(positions);
   matrix = translate(matrix, f[0], f[1], f[2]);
   

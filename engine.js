@@ -316,13 +316,14 @@ class Game{
       plane.functionID = 1;
       plane.verts = new Float32Array([
       //front
-        150,0,150,
-        0,0,150,
         0,0,0,
+        0,0,150,
+        150,0,150,
 
-       0,0,0,
-       150,0,0,
-       150,0,150
+        150,0,150,
+        150,0,0,
+        0,0,0
+
       ]);
       plane.colors = new Uint8Array([
         250,0,0,
@@ -453,6 +454,23 @@ class Game{
 
     
 
+ var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    var zNear = 0.001;
+    var zFar = 20000;
+    var projectionMatrix = m4.perspective((60 * 3.14 / 180), aspect, zNear, zFar);
+    var cameraMatrix = m4.yRotation(0);
+    cameraMatrix = m4.translate(cameraMatrix, this.camera.transform.position.x, 
+    this.camera.transform.position.y, 
+    this.camera.transform.position.z);
+    cameraMatrix = m4.xRotate(cameraMatrix, degToRad(this.camera.transform.rotation.x));
+    cameraMatrix = m4.yRotate(cameraMatrix, degToRad(this.camera.transform.rotation.y));
+    cameraMatrix = m4.zRotate(cameraMatrix, degToRad(this.camera.transform.rotation.z));
+    
+    var viewMatrix = m4.inverse(cameraMatrix);
+    
+    var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
+
+
 	for (var i = 0; i < this.GameObjects.length; i++){
 	
 	
@@ -483,25 +501,9 @@ class Game{
     var offset = 0;               // start at the beginning of the buffer
     gl.vertexAttribPointer(
         colorLocation, size, type, normalize, stride, offset);
-
-        gl.se
     // Compute the matrices
 
-    var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    var zNear = 0.001;
-    var zFar = 20000;
-    var projectionMatrix = m4.perspective((60 * 3.14 / 180), aspect, zNear, zFar);
-    var cameraMatrix = m4.yRotation(0);
-    cameraMatrix = m4.translate(cameraMatrix, this.camera.transform.position.x, 
-    this.camera.transform.position.y, 
-    this.camera.transform.position.z);
-    cameraMatrix = m4.xRotate(cameraMatrix, degToRad(this.camera.transform.rotation.x));
-    cameraMatrix = m4.yRotate(cameraMatrix, degToRad(this.camera.transform.rotation.y));
-    cameraMatrix = m4.zRotate(cameraMatrix, degToRad(this.camera.transform.rotation.z));
-    
-    var viewMatrix = m4.inverse(cameraMatrix);
-    
-    var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
+   
 
     var matrix = m4.translate(viewProjectionMatrix, this.GameObjects[i].transform.position.x, 
       this.GameObjects[i].transform.position.y, 

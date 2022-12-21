@@ -164,13 +164,14 @@ function degToRad(d) {
   attribute vec4 a_color;
   
   uniform mat4 u_matrix;
-  
+
+  varying mat4 a_matrix;
   varying vec4 v_color;
   
   void main() {
     // Multiply the position by the matrix.
     gl_Position = u_matrix * a_position;
-  
+    a_matrix = u_matrix;
     // Pass the color to the fragment shader.
     v_color = a_color;
   }
@@ -179,9 +180,11 @@ function degToRad(d) {
   <script  id="fragment-shader-3d" type="x-shader/x-fragment">
   precision mediump float;
   precision mediump int;
-  // Passed in from the vertex shader.
+
+  varying mat4 a_matrix;
   varying vec4 v_color;
   uniform int functionID;
+
 
  int modulo(float a, float b){
   return int(a - floor(a/b) * b);
@@ -189,11 +192,10 @@ function degToRad(d) {
 
   void main() {
     if(functionID == 1){
-    if((modulo(gl_FragCoord.x, 40.0) <= 5)|| modulo(gl_FragCoord.y, 40.0) <= 5){
-      gl_FragColor = vec4(250,0,0,1);
-    }
-    else{
-      gl_FragColor = vec4(0,250,0,1);
+      vec4 Coord = a_matrix.xyz;
+      Coord = cos(PI/N*Coord);
+      fragColor = vec4(1.0)-1.0*smoothstep(0.9,1.0,max(Coord.x,Coord.y));
+      gl_FragColor =vec4(1.0)-1.0*smoothstep(0.9,1.0,max(Coord.x,Coord.y))
     }
   }
   else{
